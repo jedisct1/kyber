@@ -1,6 +1,3 @@
-use kyber;
-use rand;
-
 use kyber::params::*;
 
 #[test]
