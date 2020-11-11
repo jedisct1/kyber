@@ -1,6 +1,6 @@
-extern crate hex;
-extern crate kyber;
-extern crate rand;
+use hex;
+use kyber;
+use rand;
 
 use hex::FromHexError;
 use rand::rngs::adapter::ReadRng;

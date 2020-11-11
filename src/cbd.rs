@@ -1,6 +1,6 @@
+use crate::params::{ETA, N, Q};
+use crate::poly::Poly;
 use byteorder::{ByteOrder, LittleEndian};
-use params::{ETA, N, Q};
-use poly::Poly;
 
 const BUF_LEN: usize = ETA * N / 4;
 

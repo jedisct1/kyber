@@ -1,6 +1,6 @@
-use params::{K, N, POLYBYTES, POLYVECBYTES, POLYVECCOMPRESSEDBYTES, Q};
-use poly::{self, Poly};
-use reduce::{barrett_reduce, freeze, montgomery_reduce};
+use crate::params::{K, N, POLYBYTES, POLYVECBYTES, POLYVECCOMPRESSEDBYTES, Q};
+use crate::poly::{self, Poly};
+use crate::reduce::{barrett_reduce, freeze, montgomery_reduce};
 
 pub type PolyVec = [Poly; K];
 

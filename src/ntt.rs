@@ -1,5 +1,5 @@
-use params::{N, OMEGAS_INV_BITREV_MONTGOMERY, PSIS_INV_MONTGOMERY, Q, ZETAS};
-use reduce::{barrett_reduce, montgomery_reduce};
+use crate::params::{N, OMEGAS_INV_BITREV_MONTGOMERY, PSIS_INV_MONTGOMERY, Q, ZETAS};
+use crate::reduce::{barrett_reduce, montgomery_reduce};
 
 pub fn ntt(p: &mut [u16; N]) {
     let mut k = 1;

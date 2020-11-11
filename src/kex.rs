@@ -1,10 +1,10 @@
-use kem;
-use params::{CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES, SYMBYTES};
+use crate::kem;
+use crate::params::{CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES, SYMBYTES};
 use rand_core::{CryptoRng, RngCore};
 
 pub mod uake {
     use super::*;
-    use params::{UAKE_SENDABYTES, UAKE_SENDBBYTES};
+    use crate::params::{UAKE_SENDABYTES, UAKE_SENDBBYTES};
 
     pub fn init_a<R: RngCore + CryptoRng>(
         rng: &mut R,
@@ -54,7 +54,7 @@ pub mod uake {
 
 pub mod ake {
     use super::*;
-    use params::{AKE_SENDABYTES, AKE_SENDBBYTES};
+    use crate::params::{AKE_SENDABYTES, AKE_SENDBBYTES};
 
     pub fn init_a<R: RngCore + CryptoRng>(
         rng: &mut R,

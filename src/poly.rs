@@ -1,7 +1,7 @@
-use cbd::cbd;
-pub use ntt::{invntt, ntt};
-use params::{ETA, N, POLYBYTES, POLYCOMPRESSEDBYTES, Q, SYMBYTES};
-use reduce::{barrett_reduce, freeze};
+use crate::cbd::cbd;
+pub use crate::ntt::{invntt, ntt};
+use crate::params::{ETA, N, POLYBYTES, POLYCOMPRESSEDBYTES, Q, SYMBYTES};
+use crate::reduce::{barrett_reduce, freeze};
 
 pub type Poly = [u16; N];
 

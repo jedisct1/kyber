@@ -1,4 +1,4 @@
-use params::Q;
+use crate::params::Q;
 
 const QINV: u32 = 7679; // -inverse_mod(q,2^18)
 const RLOG: u32 = 18;

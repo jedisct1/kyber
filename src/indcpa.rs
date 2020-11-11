@@ -1,10 +1,10 @@
-use byteorder::{ByteOrder, LittleEndian};
-use params::{
+use crate::params::{
     INDCPA_BYTES, INDCPA_MSGBYTES, INDCPA_PUBLICKEYBYTES, INDCPA_SECRETKEYBYTES, K, N,
     POLYCOMPRESSEDBYTES, POLYVECBYTES, POLYVECCOMPRESSEDBYTES, Q, SYMBYTES,
 };
-use poly::{self, Poly};
-use polyvec::{self, PolyVec};
+use crate::poly::{self, Poly};
+use crate::polyvec::{self, PolyVec};
+use byteorder::{ByteOrder, LittleEndian};
 use rand_core::{CryptoRng, RngCore};
 
 #[inline]
