@@ -1,19 +1,21 @@
 #![no_std]
 
-#[macro_use] extern crate arrayref;
-extern crate rand_core;
-extern crate subtle;
+#[macro_use]
+extern crate arrayref;
 extern crate byteorder;
-extern crate sha3;
 extern crate digest;
+extern crate rand_core;
+extern crate sha3;
+extern crate subtle;
 
-#[macro_use] mod utils;
-mod reduce;
-mod poly;
-mod polyvec;
-mod ntt;
+#[macro_use]
+mod utils;
 mod cbd;
 mod indcpa;
-pub mod params;
 pub mod kem;
 pub mod kex;
+mod ntt;
+pub mod params;
+mod poly;
+mod polyvec;
+mod reduce;

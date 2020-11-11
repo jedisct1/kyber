@@ -1,8 +1,7 @@
-extern crate rand;
 extern crate kyber;
+extern crate rand;
 
-use kyber::params::{ SYMBYTES, CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES };
-
+use kyber::params::{CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES, SYMBYTES};
 
 #[test]
 fn test_kyber() {

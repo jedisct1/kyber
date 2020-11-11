@@ -1,8 +1,7 @@
-extern crate rand;
 extern crate kyber;
+extern crate rand;
 
 use kyber::params::*;
-
 
 #[test]
 fn test_kex_uake() {
@@ -23,7 +22,6 @@ fn test_kex_uake() {
     assert!(ka.iter().any(|&n| n != 0));
     assert_eq!(&ka[..], &kb[..]);
 }
-
 
 #[test]
 fn test_kex_ake() {

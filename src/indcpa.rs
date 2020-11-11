@@ -1,14 +1,11 @@
-use rand_core::{ RngCore, CryptoRng };
-use byteorder::{ ByteOrder, LittleEndian };
-use ::poly::{ self, Poly };
-use ::polyvec::{ self, PolyVec };
-use ::params::{
-    N, K, Q,
-    INDCPA_PUBLICKEYBYTES, INDCPA_SECRETKEYBYTES, INDCPA_BYTES, INDCPA_MSGBYTES,
-    POLYVECBYTES, POLYCOMPRESSEDBYTES, POLYVECCOMPRESSEDBYTES,
-    SYMBYTES
+use byteorder::{ByteOrder, LittleEndian};
+use params::{
+    INDCPA_BYTES, INDCPA_MSGBYTES, INDCPA_PUBLICKEYBYTES, INDCPA_SECRETKEYBYTES, K, N,
+    POLYCOMPRESSEDBYTES, POLYVECBYTES, POLYVECCOMPRESSEDBYTES, Q, SYMBYTES,
 };
-
+use poly::{self, Poly};
+use polyvec::{self, PolyVec};
+use rand_core::{CryptoRng, RngCore};
 
 #[inline]
 pub fn pack_sk(r: &mut [u8; INDCPA_SECRETKEYBYTES], sk: &PolyVec) {
@@ -27,7 +24,11 @@ pub fn pack_pk(r: &mut [u8; INDCPA_PUBLICKEYBYTES], pk: &PolyVec, seed: &[u8; SY
 }
 
 #[inline]
-pub fn unpack_pk(pk: &mut PolyVec, seed: &mut [u8; SYMBYTES], packedpk: &[u8; INDCPA_PUBLICKEYBYTES]) {
+pub fn unpack_pk(
+    pk: &mut PolyVec,
+    seed: &mut [u8; SYMBYTES],
+    packedpk: &[u8; INDCPA_PUBLICKEYBYTES],
+) {
     polyvec::decompress(pk, array_ref!(packedpk, 0, POLYVECCOMPRESSEDBYTES));
     seed.clone_from(array_ref!(packedpk, POLYVECCOMPRESSEDBYTES, SYMBYTES));
 }
@@ -35,18 +36,24 @@ pub fn unpack_pk(pk: &mut PolyVec, seed: &mut [u8; SYMBYTES], packedpk: &[u8; IN
 #[inline]
 pub fn pack_ciphertext(r: &mut [u8; INDCPA_BYTES], b: &PolyVec, v: &Poly) {
     polyvec::compress(b, array_mut_ref!(r, 0, POLYVECCOMPRESSEDBYTES));
-    poly::compress(v, array_mut_ref!(r, POLYVECCOMPRESSEDBYTES, POLYCOMPRESSEDBYTES));
+    poly::compress(
+        v,
+        array_mut_ref!(r, POLYVECCOMPRESSEDBYTES, POLYCOMPRESSEDBYTES),
+    );
 }
 
 #[inline]
 pub fn unpack_ciphertext(b: &mut PolyVec, v: &mut Poly, r: &[u8; INDCPA_BYTES]) {
     polyvec::decompress(b, array_ref!(r, 0, POLYVECCOMPRESSEDBYTES));
-    poly::decompress(v, array_ref!(r, POLYVECCOMPRESSEDBYTES, POLYCOMPRESSEDBYTES));
+    poly::decompress(
+        v,
+        array_ref!(r, POLYVECCOMPRESSEDBYTES, POLYCOMPRESSEDBYTES),
+    );
 }
 
 pub fn gen_matrix(a: &mut [PolyVec], seed: &[u8; SYMBYTES], transposed: bool) {
+    use digest::{ExtendableOutput, Update, XofReader};
     use sha3::Shake128;
-    use digest::{ Input, ExtendableOutput, XofReader };
 
     const SHAKE128_RATE: usize = 168;
 
@@ -55,11 +62,15 @@ pub fn gen_matrix(a: &mut [PolyVec], seed: &[u8; SYMBYTES], transposed: bool) {
             let mut shake = Shake128::default();
             let (mut nblocks, mut pos, mut ctr) = (4, 0, 0);
             let mut buf = [0; SHAKE128_RATE * 4];
-            let sep = if transposed { [i as u8, j as u8] } else { [j as u8, i as u8] };
+            let sep = if transposed {
+                [i as u8, j as u8]
+            } else {
+                [j as u8, i as u8]
+            };
 
-            shake.input(seed);
-            shake.input(&sep);
-            let mut xof = shake.xof_result();
+            shake.update(seed);
+            shake.update(&sep);
+            let mut xof = shake.finalize_xof();
             xof.read(&mut buf);
 
             while ctr < N {
@@ -80,7 +91,11 @@ pub fn gen_matrix(a: &mut [PolyVec], seed: &[u8; SYMBYTES], transposed: bool) {
     }
 }
 
-pub fn keypair<R: RngCore + CryptoRng>(rng: &mut R, pk: &mut [u8; INDCPA_PUBLICKEYBYTES], sk: &mut [u8; INDCPA_SECRETKEYBYTES]) {
+pub fn keypair<R: RngCore + CryptoRng>(
+    rng: &mut R,
+    pk: &mut [u8; INDCPA_PUBLICKEYBYTES],
+    sk: &mut [u8; INDCPA_SECRETKEYBYTES],
+) {
     let mut seed = [0; SYMBYTES + SYMBYTES];
     let mut a = [[[0; N]; K]; K];
     let mut e = [[0; N]; K];
@@ -118,7 +133,12 @@ pub fn keypair<R: RngCore + CryptoRng>(rng: &mut R, pk: &mut [u8; INDCPA_PUBLICK
     pack_pk(pk, &pkpv, publicseed);
 }
 
-pub fn enc(c: &mut [u8; INDCPA_BYTES], m: &[u8; INDCPA_MSGBYTES], pk: &[u8; INDCPA_PUBLICKEYBYTES], coins: &[u8; SYMBYTES]) {
+pub fn enc(
+    c: &mut [u8; INDCPA_BYTES],
+    m: &[u8; INDCPA_MSGBYTES],
+    pk: &[u8; INDCPA_PUBLICKEYBYTES],
+    coins: &[u8; SYMBYTES],
+) {
     let (mut k, mut v, mut epp) = ([0; N], [0; N], [0; N]);
     let (mut sp, mut ep, mut bp) = ([[0; N]; K], [[0; N]; K], [[0; N]; K]);
     let mut pkpv = [[0; N]; K];

@@ -1,11 +1,11 @@
-extern crate rand;
 extern crate hex;
 extern crate kyber;
+extern crate rand;
 
-use std::io::Cursor;
-use rand::{ RngCore, CryptoRng };
-use rand::rngs::adapter::ReadRng;
 use hex::FromHexError;
+use rand::rngs::adapter::ReadRng;
+use rand::{CryptoRng, RngCore};
+use std::io::Cursor;
 
 #[cfg(feature = "kyber512")]
 const TEST_VECTOR: &str = include_str!("testvectork2.txt");
@@ -16,14 +16,13 @@ const TEST_VECTOR: &str = include_str!("testvectork3.txt");
 #[cfg(feature = "kyber1024")]
 const TEST_VECTOR: &str = include_str!("testvectork4.txt");
 
-
 #[derive(Default)]
 struct Vector {
     pub pk: Vec<u8>,
     pub sk_a: Vec<u8>,
     pub sendb: Vec<u8>,
     pub key_b: Vec<u8>,
-    pub key_a: Vec<u8>
+    pub key_a: Vec<u8>,
 }
 
 type FixedRng = UnsafeRng<ReadRng<Cursor<Vec<u8>>>>;
@@ -53,30 +52,25 @@ impl<R: RngCore> CryptoRng for UnsafeRng<R> {}
 fn parse_testvector(input: &str) -> Result<(FixedRng, Vector), FromHexError> {
     let (mut rng, mut vecs): (Vec<u8>, Vector) = Default::default();
 
-    for (i, line) in input.lines()
-        .take(8)
-        .map(hex::decode)
-        .enumerate()
-    {
+    for (i, line) in input.lines().take(8).map(hex::decode).enumerate() {
         let mut line = line?;
         match i {
-            0...1 | 4 => rng.append(&mut line),
+            0..=1 | 4 => rng.append(&mut line),
             2 => vecs.pk.append(&mut line),
             3 => vecs.sk_a.append(&mut line),
             5 => vecs.sendb.append(&mut line),
             6 => vecs.key_b.append(&mut line),
             7 => vecs.key_a.append(&mut line),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
     Ok((UnsafeRng(ReadRng::new(Cursor::new(rng))), vecs))
 }
 
-
 #[test]
 fn test_testvector() {
-    use kyber::params::{ SYMBYTES, CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES };
+    use kyber::params::{CIPHERTEXTBYTES, PUBLICKEYBYTES, SECRETKEYBYTES, SYMBYTES};
 
     let (mut rng, vecs) = parse_testvector(TEST_VECTOR).unwrap();
 

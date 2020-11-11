@@ -1,8 +1,7 @@
-use ::params::Q;
+use params::Q;
 
 const QINV: u32 = 7679; // -inverse_mod(q,2^18)
 const RLOG: u32 = 18;
-
 
 pub fn montgomery_reduce(mut a: u32) -> u16 {
     let mut u = a.wrapping_mul(QINV);
@@ -11,7 +10,6 @@ pub fn montgomery_reduce(mut a: u32) -> u16 {
     a += u;
     (a >> RLOG) as u16
 }
-
 
 pub fn barrett_reduce(a: u16) -> u16 {
     let mut u = a >> 13;
